@@ -6,12 +6,26 @@ import {CryptoService} from "./crypto.service";
 import {AuthService} from "./auth.service";
 import {APP_GUARD} from "@nestjs/core";
 import {AuthGuard} from "./auth.guard";
-import {TypeOrmModule} from "@nestjs/typeorm";
-import {User} from "./schemas";
+import {Balance, BalanceSchema, User, UserSchema} from "./schemas";
+import {MongooseModule} from "@nestjs/mongoose";
+import {Transfer, TransferSchema} from "./schemas";
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([User]),
+        MongooseModule.forFeature([
+            {
+                name: User.name,
+                schema: UserSchema,
+            },
+            {
+                name: Transfer.name,
+                schema: TransferSchema
+            },
+            {
+                name: Balance.name,
+                schema: BalanceSchema
+            }
+        ]),
         JwtModule.registerAsync({
             imports: [ConfigModule],
             inject: [ConfigService],

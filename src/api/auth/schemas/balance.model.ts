@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 import { v4 as uuidV4 } from 'uuid';
-import mongoose from "mongoose";
 
 @Schema({
+    collection: 'balances',
     timestamps: true,
     toObject: {
         transform: function (_doc: any, ret) {
             delete ret._id;
             delete ret.__v;
             ret.id = _doc.id;
-            ret.customerId = _doc.customerId;
         },
     },
     toJSON: {
@@ -17,11 +17,10 @@ import mongoose from "mongoose";
             delete ret._id;
             delete ret.__v;
             ret.id = _doc.id;
-            ret.customerId = _doc.customerId;
         },
     },
 })
-export class User<T = any> {
+export class Balance {
     @Prop({
         type: mongoose.Schema.Types.UUID,
         default: () => uuidV4(),
@@ -30,23 +29,15 @@ export class User<T = any> {
     _id: string;
     id: string;
 
-    @Prop({ required: () => true, type: String })
-    email: string;
+    @Prop({ type: mongoose.Schema.Types.UUID, required: true })
+    userId: string;
 
-    @Prop({ required: () => true })
-    password: string;
+    @Prop({ type: Number, required: true })
+    amount: number;
 
-    @Prop({ required: () => true, type: String })
-    username: string;
-
-    @Prop({ required: () => true, type: String })
-    birthdate: string;
-
-    @Prop({ default: () => new Date() })
     createdAt: Date;
 
-    @Prop({ default: () => new Date() })
     updatedAt: Date;
 }
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const BalanceSchema = SchemaFactory.createForClass(Balance);

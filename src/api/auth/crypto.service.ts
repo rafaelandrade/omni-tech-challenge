@@ -14,6 +14,6 @@ export class CryptoService {
 
     async compareHash(data: string, hash: string): Promise<boolean> {
         const newHash = this.createHash(data)
-        return newHash == data
+        return newHash == hash
     }
 }

@@ -6,7 +6,7 @@ import config from './env.parse'
 @Module({
     imports: [
         ConfigModule.forRoot({
-            envFilePath: `.env.${process.env.NODE_ENV}`,
+            envFilePath: `.env`,
             isGlobal: true,
             load: [config]
         })

@@ -1,12 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { InjectDataSource } from "@nestjs/typeorm";
-import { DataSource } from "typeorm";
+import { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 @Injectable()
 export class MongoDbService {
-    constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
-
-    getDbHandle(): DataSource {
-        return this.dataSource;
+    constructor(@InjectConnection() private readonly connection: Connection) {}
+    getDbHandle(): Connection {
+        return this.connection;
     }
 }

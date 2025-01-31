@@ -1,23 +1,17 @@
-version: '3.8'
-
 services:
   omnichallenge-api:
     container_name: omnichallenge
     build: .
     ports:
       - '3000:3000'
-    environment:
-      - MONGO_URL=mongodb://mongo1:30001,mongo2:30002,mongo3:30003/omnichallenge?replicaSet=my-replica-set
+    links:
+      - mongo1
+      - mongo2
+      - mongo3
     depends_on:
-      mongo1:
-        condition: service_healthy
-      mongo2:
-        condition: service_started
-      mongo3:
-        condition: service_started
-    profiles:
-      - local
-
+      - mongo1
+      - mongo2
+      - mongo3
   mongo1:
     image: mongo:5
     container_name: mongo1
@@ -27,13 +21,9 @@ services:
     ports:
       - 30001:30001
     healthcheck:
-      test: echo "rs.status().ok" | mongo --port 30001 --quiet
+      test: test $$(echo "rs.initiate({_id:'my-replica-set',members:[{_id:0,host:\"mongo1:30001\"},{_id:1,host:\"mongo2:30002\"},{_id:2,host:\"mongo3:30003\"}]}).ok || rs.status().ok" | mongo --port 30001 --quiet) -eq 1
       interval: 10s
-      retries: 5
-    profiles:
-      - local
-      - infra
-      - test
+      start_period: 40s
 
   mongo2:
     image: mongo:5
@@ -43,10 +33,6 @@ services:
       - mongo_database_2:/data/db
     ports:
       - 30002:30002
-    profiles:
-      - local
-      - infra
-      - test
 
   mongo3:
     image: mongo:5
@@ -56,10 +42,6 @@ services:
       - mongo_database_3:/data/db
     ports:
       - 30003:30003
-    profiles:
-      - local
-      - infra
-      - test
 
 volumes:
   mongo_database_1:
